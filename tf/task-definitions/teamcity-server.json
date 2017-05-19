@@ -1,0 +1,26 @@
+[
+  {
+    "name": "server",
+    "image": "jetbrains/teamcity-server",
+    "memory": 2048,
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": 8111,
+        "hostPort": 8111
+      }
+    ],
+    "mountPoints": [
+      {
+        "sourceVolume": "data-dir",
+        "containerPath": "/data/teamcity_server/datadir",
+        "readOnly": false
+      },
+      {
+        "sourceVolume": "log-dir",
+        "containerPath": "/opt/teamcity/logs",
+        "readOnly": false
+      }
+    ]
+  }
+]
