@@ -12,12 +12,12 @@
     ],
     "mountPoints": [
       {
-        "sourceVolume": "data-dir",
+        "sourceVolume": "datadir",
         "containerPath": "/data/teamcity_server/datadir",
         "readOnly": false
       },
       {
-        "sourceVolume": "log-dir",
+        "sourceVolume": "logdir",
         "containerPath": "/opt/teamcity/logs",
         "readOnly": false
       }

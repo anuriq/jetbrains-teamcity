@@ -11,16 +11,30 @@ resource "aws_launch_configuration" "teamcity" {
   key_name                    = "${aws_key_pair.teamcity.key_name}"
   security_groups             = ["${aws_security_group.teamcity_server.id}"]
   iam_instance_profile        = "${aws_iam_instance_profile.teamcity_cluster.name}"
-  user_data                   = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.teamcity.name} > /etc/ecs/ecs.config"
+  user_data                   = <<EOF
+#!/bin/bash
+sudo yum install -y nfs-utils nfs-utils-lib
+mkdir /opt/teamcity_data_dir && mkdir /opt/teamcity_log_dir
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ${aws_efs_mount_target.teamcity_data_dir.dns_name}:/ /opt/teamcity_data_dir
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ${aws_efs_mount_target.teamcity_log_dir.dns_name}:/ /opt/teamcity_log_dir
+sudo service docker restart
+echo ECS_CLUSTER=${aws_ecs_cluster.teamcity.name} > /etc/ecs/ecs.config
+EOF
 }
 
 resource "aws_autoscaling_group" "teamcity" {
   name                 = "teamcity-ecs-asg"
-  vpc_zone_identifier  = ["${aws_subnet.teamcity_a.id}", "${aws_subnet.teamcity_b.id}", "${aws_subnet.teamcity_c.id}"]
+  vpc_zone_identifier  = ["${aws_subnet.teamcity_c.id}"]
   launch_configuration = "${aws_launch_configuration.teamcity.name}"
   min_size             = 1
   max_size             = 5
-  desired_capacity     = 1
+  desired_capacity     = 2
+
+  tag {
+    key                 = "project"
+    value               = "teamcity"
+    propagate_at_launch = true
+  }
 }
 
 resource "aws_ecs_cluster" "teamcity" {

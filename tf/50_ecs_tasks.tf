@@ -4,13 +4,13 @@ resource "aws_ecs_task_definition" "teamcity_server" {
   network_mode          = "bridge"
 
   volume {
-    name      = "data-dir"
-    host_path = "/ecs/teamcity/data_dir"
+    name      = "datadir"
+    host_path = "/opt/teamcity_data_dir"
   }
 
   volume {
-    name      = "log-dir"
-    host_path = "/ecs/teamcity/log_dir"
+    name      = "logdir"
+    host_path = "/opt/teamcity_log_dir"
   }
 }
 

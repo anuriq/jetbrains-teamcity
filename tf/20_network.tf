@@ -114,6 +114,61 @@ resource "aws_nat_gateway" "gw" {
 }
 */
 
+resource "aws_security_group" "teamcity_anywhere" {
+  name        = "ssh-from-anywhere"
+  description = "Allow ssh from anywhere"
+  vpc_id      = "${aws_vpc.teamcity.id}"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    project = "teamcity"
+  }
+}
+
+resource "aws_security_group" "teamcity_internal" {
+  name        = "teamcity-vpc-internal"
+  description = "Allow all ports inside private VPC"
+  vpc_id      = "${aws_vpc.teamcity.id}"
+
+  ingress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["10.10.0.0/16"]
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "udp"
+    cidr_blocks = ["10.10.0.0/16"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    project = "teamcity"
+  }
+}
+
 resource "aws_security_group" "teamcity_server" {
   name        = "teamcity-server-sg"
   description = "Allow teamcity server inside private VPC"
