@@ -12,13 +12,6 @@ resource "aws_launch_configuration" "teamcity" {
   security_groups             = ["${aws_security_group.teamcity_server.id}"]
   iam_instance_profile        = "${aws_iam_instance_profile.teamcity_cluster.name}"
   user_data                   = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.teamcity.name} > /etc/ecs/ecs.config"
-
-  ebs_block_device {
-    device_name           = "sdh"
-    volume_type           = "gp2"
-    volume_size           = 10
-    delete_on_termination = false
-  }
 }
 
 resource "aws_autoscaling_group" "teamcity" {

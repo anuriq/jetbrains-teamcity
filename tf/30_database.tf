@@ -12,7 +12,7 @@ resource "aws_db_instance" "teamcity" {
   db_subnet_group_name    = "${aws_db_subnet_group.teamcity.id}"
   parameter_group_name    = "default.mysql5.7"
   backup_retention_period = 1
-  backup_window           = "Sun:05:00-Sun:08:00"
+  backup_window           = "02:00-04:00"
   maintenance_window      = "Sun:05:00-Sun:08:00"
   publicly_accessible     = false
   vpc_security_group_ids  = ["${aws_security_group.teamcity_db.id}"]

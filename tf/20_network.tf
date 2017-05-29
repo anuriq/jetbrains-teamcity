@@ -14,7 +14,6 @@ resource "aws_route_table" "main" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = "${aws_internet_gateway.gw.id}"
-
     //nat_gateway_id = "${aws_nat_gateway.gw.id}"
   }
 
@@ -117,7 +116,7 @@ resource "aws_nat_gateway" "gw" {
 
 resource "aws_security_group" "teamcity_server" {
   name        = "teamcity-server-sg"
-  description = "Allow all ports inside private VPC"
+  description = "Allow teamcity server inside private VPC"
   vpc_id      = "${aws_vpc.teamcity.id}"
 
   ingress {
