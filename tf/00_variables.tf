@@ -18,6 +18,10 @@ variable "aws_keypair_file" {
   default = "~/.ssh/terraform_rsa.pub"
 }
 
+variable "teamcity_db_name" {
+  default = "teamcitydb"
+}
+
 variable "teamcity_db_user" {
   default = "teamcity_app"
 }

@@ -6,7 +6,7 @@ resource "aws_db_instance" "teamcity" {
   instance_class          = "db.t2.micro"
   multi_az                = false                                    // switch to true for production
   identifier              = "teamcitydbinstance"
-  name                    = "teamcitydb"
+  name                    = "${var.teamcity_db_name}"
   username                = "${var.teamcity_db_user}"
   password                = "${var.teamcity_db_pass}"
   db_subnet_group_name    = "${aws_db_subnet_group.teamcity.id}"
