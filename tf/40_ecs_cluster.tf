@@ -18,6 +18,10 @@ mkdir /opt/teamcity_data_dir && mkdir /opt/teamcity_log_dir
 sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ${aws_efs_mount_target.teamcity_data_dir.dns_name}:/ /opt/teamcity_data_dir
 sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ${aws_efs_mount_target.teamcity_log_dir.dns_name}:/ /opt/teamcity_log_dir
 sudo service docker restart
+mkdir -p /opt/teamcity_data_dir/config
+echo "connectionProperties.user=${var.teamcity_db_user}\n" > /opt/teamcity_data_dir/config/database.properties
+echo "connectionProperties.password=${var.teamcity_db_pass}\n" >> /opt/teamcity_data_dir/config/database.properties
+echo "connectionUrl=jdbc\:mysql\://${aws_db_instance.teamcity.address}/${var.teamcity_db_name}" >> /opt/teamcity_data_dir/config/database.properties
 echo ECS_CLUSTER=${aws_ecs_cluster.teamcity.name} > /etc/ecs/ecs.config
 EOF
 }
@@ -38,6 +42,7 @@ resource "aws_autoscaling_group" "teamcity" {
 }
 
 resource "aws_ecs_cluster" "teamcity" {
+  depends_on = ["aws_db_instance.teamcity"]
   name = "teamcity-cloud"
 }
 
